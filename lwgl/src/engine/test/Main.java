@@ -7,9 +7,8 @@ import engine.drawing.Loader;
 import engine.drawing.RawModel;
 import engine.drawing.Render;
 import engine.window.Window;
-import org.lwjgl.opengl.GL;
+import shaders.StaticShader;
 
-import static org.lwjgl.opengl.GL11.*;
 
 
 public class Main {
@@ -19,6 +18,7 @@ public class Main {
     Render renderer;
     Loader loader;
     RawModel model;
+    StaticShader shader;
 
     float[] vertices = {
             -0.5f, 0.5f, 0f,
@@ -39,6 +39,7 @@ public class Main {
         renderer=new Render();
         window=new Window("Test", 800, 600, true, false, true, false);
         model= loader.loadtoVAO(vertices, indexec);
+        shader = new StaticShader();
         update();
     }
 
@@ -47,9 +48,13 @@ public class Main {
         while(!window.shoulclose())
         {
            renderer.prepare();
+            shader.start();
             renderer.render(model);
+            shader.stop();
             window.update();
         }
+
+        shader.cleanUp();
         loader.cleanup();
         window.dispose();
     }
