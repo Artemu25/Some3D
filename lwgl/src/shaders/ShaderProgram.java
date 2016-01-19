@@ -1,8 +1,11 @@
 package shaders;
 
+import com.sun.javafx.geom.Matrix3f;
+import engine.math.Vector3f;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
-import org.lwjgl.
+import org.lwjgl.ovr.OVRUtil;
+import org.lwjgl.ovr.OVRUtil.*
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -88,8 +91,16 @@ public abstract class ShaderProgram {
         GL20.glUniform1f(location, value);
     }
 
-    //protected void loadVector(int location, Vector3f){
+    protected void loadVector(int location, Vector3f vector){
+        GL20.glUniform3f(location, vector.x, vector.y, vector.z);
+    }
 
-   // }
+    protected void loadBoolean(int location, boolean value){
+        float toLoad=0;
+        if (value)
+            toLoad=1;
+        GL20.glUniform1f(location, toLoad);
+    }
+
 }
 
