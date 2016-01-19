@@ -2,6 +2,7 @@ package shaders;
 
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
+import org.lwjgl.
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -23,9 +24,16 @@ public abstract class ShaderProgram {
         programID = GL20.glCreateProgram();
         GL20.glAttachShader(programID, vertexShaderID);
         GL20.glAttachShader(programID, fragmentShaderID);
-        GL20.glLinkProgram(programID);
         bindAttributes();
+        GL20.glLinkProgram(programID);
         GL20.glValidateProgram(programID);
+        getAllUniformLocations();
+    }
+
+    protected abstract void getAllUniformLocations();
+
+    protected int getUniformLocation(String uniformname){
+        return GL20.glGetUniformLocation(programID, uniformname);
     }
 
     public void start() {
@@ -75,4 +83,13 @@ public abstract class ShaderProgram {
         }
         return shaderID;
     }
+
+    protected void loadFloat(int location, float value){
+        GL20.glUniform1f(location, value);
+    }
+
+    //protected void loadVector(int location, Vector3f){
+
+   // }
 }
+
