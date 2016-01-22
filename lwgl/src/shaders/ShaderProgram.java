@@ -1,15 +1,15 @@
 package shaders;
 
-import com.sun.javafx.geom.Matrix3f;
+import engine.math.Matrix4f;
 import engine.math.Vector3f;
+import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
-import org.lwjgl.ovr.OVRUtil;
-import org.lwjgl.ovr.OVRUtil.*
 
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.FloatBuffer;
 
 /**
  * Created by Admin on 18.01.2016.
@@ -19,6 +19,8 @@ public abstract class ShaderProgram {
     private int programID;
     private int vertexShaderID;
     private int fragmentShaderID;
+
+    private static FloatBuffer matrixBuffer = BufferUtils.createFloatBuffer(16);
 
     public ShaderProgram(String vertexFile, String fragmentFile)
     {
@@ -101,6 +103,13 @@ public abstract class ShaderProgram {
             toLoad=1;
         GL20.glUniform1f(location, toLoad);
     }
+
+    protected void loadMatrix(int location, Matrix4f matrix){
+        matrix.store(matrixBuffer);
+        matrixBuffer.flip();
+        GL20.glUniformMatrix4fv(location, false, matrixBuffer);
+    }
+
 
 }
 

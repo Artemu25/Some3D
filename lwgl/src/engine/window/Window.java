@@ -4,6 +4,8 @@ package engine.window;
  * Created by Admin on 14.01.2016.
  */
 
+import engine.input.Keyboard;
+import org.lwjgl.glfw.GLFWKeyCallback;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL;
 
@@ -12,6 +14,10 @@ import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
 public class Window {
+
+    private GLFWKeyCallback keyCallback;
+
+    private Keyboard keyboard;
 
     private String title;
     private int width, height;
@@ -45,6 +51,9 @@ public class Window {
 
         glfwMakeContextCurrent(windowID);
 
+        keyCallback = keyboard = new Keyboard();
+        keyCallback.set(windowID);
+
         glfwSwapInterval(vsync? 1: 0);
 
         GL.createCapabilities();
@@ -56,6 +65,7 @@ public class Window {
     public void update()
     {
         glfwSwapBuffers(windowID);
+        keyboard.update();
         glfwPollEvents();
     }
 
@@ -81,6 +91,15 @@ public class Window {
         return glfwWindowShouldClose(windowID)==GL_TRUE;
     }
 
+    public int getWidth() {
+        return width;
+    }
 
+    public int getHeight() {
+        return height;
+    }
 
+    public Keyboard getKeyboard(){
+        return keyboard;
+    }
 }

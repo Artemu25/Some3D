@@ -4,13 +4,18 @@ package engine.test;
  * Created by Admin on 14.01.2016.
  */
 import engine.drawing.Loader;
+import engine.math.Vector3f;
+import entities.Camera;
+import entities.Entity;
 import models.RawModel;
 import engine.drawing.Render;
 import engine.window.Window;
 import models.TexturedModel;
+import org.lwjgl.opengl.GL11;
 import shaders.StaticShader;
 import textures.ModelTexture;
 
+import static org.lwjgl.glfw.GLFW.*;
 
 public class Main {
 
@@ -21,7 +26,9 @@ public class Main {
     RawModel model;
     StaticShader shader;
     ModelTexture texture;
-    TexturedModel textureModel;
+    TexturedModel staticModel;
+    Entity entity;
+    Camera camera;
 
 
     float[] vertices = {
@@ -46,13 +53,15 @@ public class Main {
 
     public Main()
     {
-        loader=new Loader();
-        renderer=new Render();
-        window=new Window("Test", 800, 600, true, false, true, false);
-        model= loader.loadtoVAO(vertices, textureCoords, indexec);
+        loader = new Loader();
+        window = new Window("Test", 800, 600, true, false, true, false);
+        camera = new Camera(window);
+        model = loader.loadtoVAO(vertices, textureCoords, indexec);
         texture = new ModelTexture(loader.loadTexture("piramid"));
-        textureModel = new TexturedModel(model, texture);
+        staticModel = new TexturedModel(model, texture);
+        entity = new Entity(staticModel, new Vector3f(0, 0, -1), 0, 0, 0, 1);
         shader = new StaticShader();
+        renderer=new Render(shader, window.getWidth(), window.getHeight());
         update();
     }
 
@@ -60,9 +69,12 @@ public class Main {
     {
         while(!window.shoulclose())
         {
-           renderer.prepare();
+            entity.increasePosition(0, 0, -0.01f);
+            camera.move();
+            renderer.prepare();
             shader.start();
-            renderer.render(textureModel);
+            shader.loadViewMatrix(camera);
+            renderer.render(entity, shader);
             shader.stop();
             window.update();
         }
