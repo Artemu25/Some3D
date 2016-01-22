@@ -3,19 +3,16 @@ package engine.test;
 /**
  * Created by Admin on 14.01.2016.
  */
-import engine.drawing.Loader;
+import engine.renderEngine.Loader;
 import engine.math.Vector3f;
 import entities.Camera;
 import entities.Entity;
 import models.RawModel;
-import engine.drawing.Render;
+import engine.renderEngine.Render;
 import engine.window.Window;
 import models.TexturedModel;
-import org.lwjgl.opengl.GL11;
 import shaders.StaticShader;
 import textures.ModelTexture;
-
-import static org.lwjgl.glfw.GLFW.*;
 
 public class Main {
 
