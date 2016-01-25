@@ -5,8 +5,10 @@ package engine.test;
  */
 import engine.renderEngine.Loader;
 import engine.math.Vector3f;
+import engine.renderEngine.OBJLoader;
 import entities.Camera;
 import entities.Entity;
+import entities.Light;
 import models.RawModel;
 import engine.renderEngine.Render;
 import engine.window.Window;
@@ -26,85 +28,9 @@ public class Main {
     TexturedModel staticModel;
     Entity entity;
     Camera camera;
-
-    float[] vertices = {
-            -0.5f,0.5f,-0.5f,
-            -0.5f,-0.5f,-0.5f,
-            0.5f,-0.5f,-0.5f,
-            0.5f,0.5f,-0.5f,
-
-            -0.5f,0.5f,0.5f,
-            -0.5f,-0.5f,0.5f,
-            0.5f,-0.5f,0.5f,
-            0.5f,0.5f,0.5f,
-
-            0.5f,0.5f,-0.5f,
-            0.5f,-0.5f,-0.5f,
-            0.5f,-0.5f,0.5f,
-            0.5f,0.5f,0.5f,
-
-            -0.5f,0.5f,-0.5f,
-            -0.5f,-0.5f,-0.5f,
-            -0.5f,-0.5f,0.5f,
-            -0.5f,0.5f,0.5f,
-
-            -0.5f,0.5f,0.5f,
-            -0.5f,0.5f,-0.5f,
-            0.5f,0.5f,-0.5f,
-            0.5f,0.5f,0.5f,
-
-            -0.5f,-0.5f,0.5f,
-            -0.5f,-0.5f,-0.5f,
-            0.5f,-0.5f,-0.5f,
-            0.5f,-0.5f,0.5f
-
-    };
-
-    float[] textureCoords = {
-
-            0,0,
-            0,1,
-            1,1,
-            1,0,
-            0,0,
-            0,1,
-            1,1,
-            1,0,
-            0,0,
-            0,1,
-            1,1,
-            1,0,
-            0,0,
-            0,1,
-            1,1,
-            1,0,
-            0,0,
-            0,1,
-            1,1,
-            1,0,
-            0,0,
-            0,1,
-            1,1,
-            1,0
+    Light light;
 
 
-    };
-
-    int[] indices = {
-            0,1,3,
-            3,1,2,
-            4,5,7,
-            7,5,6,
-            8,9,11,
-            11,9,10,
-            12,13,15,
-            15,13,14,
-            16,17,19,
-            19,17,18,
-            20,21,23,
-            23,21,22
-
-    };
 
     /*float[] vertices = {
             -0.5f, 0.5f, 0f,
@@ -131,10 +57,13 @@ public class Main {
         loader = new Loader();
         window = new Window("Test", 800, 600, true, false, true, false);
         camera = new Camera(window);
-        model = loader.loadtoVAO(vertices, textureCoords, indices);
-        texture = new ModelTexture(loader.loadTexture("piramid"));
-        staticModel = new TexturedModel(model, texture);
-        entity = new Entity(staticModel, new Vector3f(0, 0, -5), 0, 0, 0, 1);
+        light = new Light(new Vector3f(0, 0, -20), new Vector3f(1, 1, 1));
+        model = OBJLoader.loadObjModel("dragon", loader);
+        staticModel = new TexturedModel(model, new ModelTexture(loader.loadTexture("colors")));
+        texture = staticModel.getTexture();
+        texture.setShineDamper(400);
+        texture.setReflectivity(1);
+        entity = new Entity(staticModel, new Vector3f(0, 0, -50), 0, 0, 0, 1);
         shader = new StaticShader();
         renderer=new Render(shader, window.getWidth(), window.getHeight());
         update();
@@ -144,10 +73,11 @@ public class Main {
     {
         while(!window.shoulclose())
         {
-            entity.increaseRotation(1, 1, 0);
+            entity.increaseRotation(0, 1, 0);
             camera.move();
             renderer.prepare();
             shader.start();
+            shader.loadLight(light);
             shader.loadViewMatrix(camera);
             renderer.render(entity, shader);
             shader.stop();
